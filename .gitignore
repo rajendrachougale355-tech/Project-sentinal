@@ -1,0 +1,12 @@
+# Local-only terraform data
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+
+# Sensitive variables
+*.tfvars
+*.tfvars.json
+
+# Keys (Never push these!)
+*.pem
