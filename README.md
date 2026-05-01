@@ -52,6 +52,10 @@ IAM Permissions: Resolved "no basic auth credentials" errors by attaching the co
 
 
 
+
+
+
+
 🛠️ Project Sentinel: Troubleshooting & Resolution Log
 
 
