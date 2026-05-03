@@ -7,7 +7,7 @@ pipeline {
         ECR_URL        = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
         
         // Docker Hub variables
-        DOCKER_HUB_USER = 'rajchouugalee' // Change this
+        DOCKER_HUB_USER = 'rajchouugale' // Change this
         IMAGE_NAME      = 'project-sentinel-app'
         IMAGE_TAG       = 'v1'
     }
