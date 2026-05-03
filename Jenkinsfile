@@ -7,12 +7,17 @@ pipeline {
         ECR_URL        = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
         
         // Docker Hub variables
-        DOCKER_HUB_USER = 'your_dockerhub_username' // Change this
+        DOCKER_HUB_USER = 'rajchouugalee' // Change this
         IMAGE_NAME      = 'project-sentinel-app'
         IMAGE_TAG       = 'v1'
     }
     stages {
-        // ... Previous stages (Checkout, Build, ECR Push) ...
+        stage('Build Image') {
+            steps {
+                // This step creates the image that the next stage is looking for
+                sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
+            }
+        }
 
         stage('Push to Docker Hub') {
             steps {
