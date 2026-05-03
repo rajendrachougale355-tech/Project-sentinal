@@ -30,24 +30,23 @@ pipeline {
             }
         }
 
-        stage('Deploy to App Server') {
-            steps {
-                sshagent(['app-server-ssh-key']) {
-                    sh """
-                        ssh -o StrictHostKeyChecking=no ec2-user@10.0.2.111 << 'EOF'
-                            # Stop and remove the old container if it exists
-                            sudo docker stop sentinel-app || true
-                            sudo docker rm sentinel-app || true
-                            
-                            # Pull the fresh image from Docker Hub
-                            sudo docker pull ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}
-                            
-                            # Start the new container
-                            sudo docker run -d -p 80:80 --name sentinel-app ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}
-EOF
-                    """
-                }
-            }
+      stage('Deploy to App Server') {
+    steps {
+        sshCommand remote: [
+            name: 'app-server',
+            host: '10.0.2.111',
+            user: 'ec2-user',
+            identityFile: '/var/lib/jenkins/Project_key.pem'
+        ],
+        command: """
+            sudo docker stop sentinel-app || true
+            sudo docker rm sentinel-app || true
+            sudo docker pull ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}
+            sudo docker run -d -p 80:80 --name sentinel-app ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}
+        """
+    }
+}
+
         }
     }
 }
