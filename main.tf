@@ -16,10 +16,10 @@ resource "aws_instance" "app_server" {
   instance_type          = "t3.micro"
   subnet_id              = aws_subnet.private_app_subnet.id
   vpc_security_group_ids = [aws_security_group.web_sg.id]
-  key_name = "Project_key"
-  iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
+  key_name               = "Project_key"
+  iam_instance_profile   = aws_iam_instance_profile.ec2_profile.name
 
-user_data = <<-EOF
+  user_data = <<-EOF
               #!/bin/bash
               sudo yum update -y
               sudo amazon-linux-extras install docker -y
@@ -48,7 +48,7 @@ resource "aws_instance" "bastion" {
   subnet_id                   = aws_subnet.public_subnet.id # Lives in Public Subnet
   vpc_security_group_ids      = [aws_security_group.web_sg.id]
   associate_public_ip_address = true # Needs a Public IP
-  key_name = "Project_key"
+  key_name                    = "Project_key"
   tags = {
     Name = "Sentinel-Bastion-Host"
   }

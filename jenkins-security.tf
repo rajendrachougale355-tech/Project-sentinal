@@ -9,7 +9,7 @@ resource "aws_security_group" "jenkins_sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"] # In production, restrict this to your IP
   }
-#ssh access for maintenance - In production, restrict this to your IP
+  #ssh access for maintenance - In production, restrict this to your IP
   ingress {
     from_port   = 22
     to_port     = 22
@@ -27,20 +27,27 @@ resource "aws_security_group" "jenkins_sg" {
 
 resource "aws_instance" "jenkins_server" {
   ami                    = "ami-07a00cf47dbbc844c" # ubuntu Linux 2
-  instance_type          = "m7i-flex.large"             # Jenkins needs at least 4GB RAM
+  instance_type          = "m7i-flex.large"        # Jenkins needs at least 4GB RAM
   subnet_id              = aws_subnet.public_subnet.id
   vpc_security_group_ids = [aws_security_group.jenkins_sg.id]
   key_name               = "Project_key"
 
   user_data = <<-EOF
               #!/bin/bash
-              sudo apt update -y
-              sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
-              sudo import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
-              sudo amazon-linux-extras install java-openjdk11 -y
-              sudo apt install jenkins -y
-              sudo systemctl enable jenkins
-              sudo systemctl start jenkins
+             #!/bin/bash
+sudo apt update -y
+sudo apt install openjdk-11-jdk -y
+
+# Add Jenkins repo
+wget -q -O - https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | sudo tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+
+sudo apt update -y
+sudo apt install jenkins -y
+
+sudo systemctl enable jenkins
+sudo systemctl start jenkins
+
               EOF
 
   tags = { Name = "Sentinel-Jenkins-Master" }

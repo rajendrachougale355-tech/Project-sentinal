@@ -11,7 +11,7 @@ resource "aws_vpc" "sentinel_vpc" {
 
 
 resource "aws_subnet" "public_subnet" {
-  vpc_id                  = aws_vpc.sentinel_vpc.id 
+  vpc_id                  = aws_vpc.sentinel_vpc.id
   cidr_block              = "10.0.1.0/24"
   availability_zone       = "ap-south-1a"
   map_public_ip_on_launch = true
@@ -19,13 +19,14 @@ resource "aws_subnet" "public_subnet" {
   tags = {
     Name = "Sentinel-Public-Subnet"
   }
-  
+
 }
 
 resource "aws_subnet" "public_subnet_b" {
   vpc_id            = aws_vpc.sentinel_vpc.id
   cidr_block        = "10.0.3.0/24"
   availability_zone = "ap-south-1b"
+   map_public_ip_on_launch = true 
 }
 
 # 4. Create an Internet Gateway (The Door)
@@ -66,6 +67,18 @@ resource "aws_subnet" "private_app_subnet" {
   }
 }
 
+# New Private Subnet in a different Zone
+resource "aws_subnet" "private_app_subnet-2" {
+  vpc_id            = aws_vpc.sentinel_vpc.id
+  cidr_block        = "10.0.4.0/24"          # Logic: Use a new unique IP range
+  availability_zone = "ap-south-1b"           # Logic: Must be different from your 1st subnet
+
+  tags = {
+    Name                                           = "sentinel-private-2"
+    "kubernetes.io/cluster/project-sentinel-eks" = "shared"
+    "kubernetes.io/role/internal-elb"             = "1"
+  }
+}
 # 2. Create an Elastic IP for the NAT Gateway
 resource "aws_eip" "nat_eip" {
   domain     = "vpc"
@@ -119,7 +132,7 @@ resource "aws_security_group" "web_sg" {
     from_port   = 22
     to_port     = 22
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] 
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   # Outbound: Allow all traffic to the internet
