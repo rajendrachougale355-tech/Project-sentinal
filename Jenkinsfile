@@ -36,7 +36,7 @@ pipeline {
                     name: 'app-server',
                     host: '10.0.2.111',
                     user: 'ec2-user',
-                    identityFile: '/var/lib/jenkins/Project_key.pem'
+                    identityFile: '/var/lib/jenkins/Project_key.pem',
                     allowAnyHosts: true
                 ],
                 command: """
